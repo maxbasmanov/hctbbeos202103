@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\EOS\v2;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Log;
@@ -470,13 +471,15 @@ class EosController extends Controller
 
 		$log = new Log;
 		$log->host = request()->getHttpHost();
-		$log->client_id = request()->header('PHP_AUTH_USER') ?? request()->client_id;
+		$log->group_id = request()->group_id ?? 0;
+		$log->client_id = request()->header('PHP_AUTH_USER') ?? request()->client_id ?? 0;
 		$log->method = ($method == 'POST') ? 1 : 0;
 		$log->status = @$info['http_code'];
 		$log->url = @$url['path'];
 		$log->ip = '127.0.0.1';
 		$log->request = base64_encode(gzcompress((($object != false) ? json_encode($object) : $body), 9));
 		$log->response = base64_encode(gzcompress($head, 9));
+		$log->created_at = Carbon::now();
 		$log->save();
 
 		$result = json_decode($head);

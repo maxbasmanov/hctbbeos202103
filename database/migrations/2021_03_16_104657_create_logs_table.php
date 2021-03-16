@@ -21,9 +21,10 @@ class CreateLogsTable extends Migration
             $table->integer('group_id');
 			$table->uuid('client_id');
 			$table->text('url');
+			$table->text('ip');
 			$table->text('request');
 			$table->text('response');
-			$table->datetime('created_at');
+			$table->timestamp('created_at');
 		});
     }
 
