@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use API\EOS\v2\WalletController;
+use API\EOS\v2\TransactionController;
+use API\EOS\v2\ReferralController;
+use API\EOS\v2\StatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +17,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(array('prefix' => 'eos/v2'), function() {
+	Route::post('wallet/store', [WalletController::class, 'store']);
+	Route::post('wallet/update', [WalletController::class, 'update']);
+	Route::post('wallet/balance', [WalletController::class, 'balance']);
+
+	Route::post('transactions', [TransactionController::class, 'index']);
+	Route::post('transactions/store', [TransactionController::class, 'store']);
+
+	Route::post('referrals/store', [ReferralController::class, 'store']);
+
+	Route::post('statistics', [StatController::class, 'index']);
 });
