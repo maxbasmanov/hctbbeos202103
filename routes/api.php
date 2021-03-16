@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Http\Request;
-use API\EOS\v2\WalletController;
-use API\EOS\v2\TransactionController;
-use API\EOS\v2\ReferralController;
-use API\EOS\v2\StatController;
+use App\Http\Controllers\API\EOS\v2\WalletController;
+use App\Http\Controllers\API\EOS\v2\TransactionController;
+use App\Http\Controllers\API\EOS\v2\ReferralController;
+use App\Http\Controllers\API\EOS\v2\StatController;
 
 /*
 |--------------------------------------------------------------------------
