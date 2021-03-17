@@ -85,7 +85,7 @@ class EosController extends Controller
 		    "transaction" => [
 		        "actions" => [
 		            [
-		                "account" => config('custom.eos.wallet'),
+		                "account" => "eosio.token",
 		                "authorization" => [
 		                    [
 		                        "actor" => config('custom.eos.wallet'),
@@ -173,7 +173,7 @@ class EosController extends Controller
 							"delay_sec" => 0,
 						    "actions" => [
 								[
-							        "account" => config('custom.eos.wallet'),
+							        "account" => "eosio.token",
 							        "name" => "transfer",
 							        "authorization" => [
 										[
@@ -206,7 +206,7 @@ class EosController extends Controller
 							    "context_free_actions" => [],
 							    "actions" => [
 									[
-							            "account" => config('custom.eos.wallet'),
+							            "account" => "eosio.token",
 							            "name" => "transfer",
 							            "authorization" => [
 											[
