@@ -9,6 +9,11 @@ use App\Models\Log;
 
 class EosController extends Controller
 {
+	private static function expiration()
+	{
+		return date("Y-m-d\TH:i:s", time() - 10800 + 5400);
+	}
+
 	private static function abi_json_to_bin($object)
 	{
 		$url = config('custom.eos.cleos').'v1/chain/abi_json_to_bin';
@@ -94,7 +99,7 @@ class EosController extends Controller
 		        "context_free_actions" => [],
 		        "context_free_data" => [],
 		        "delay_sec" => 0,
-		        "expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
+		        "expiration" => self::expiration(),
 		        "max_cpu_usage_ms" => 0,
 		        "max_net_usage_words" => 0,
 		        "ref_block_num" => $get_block->block_num,
@@ -162,7 +167,7 @@ class EosController extends Controller
 						[
 							"ref_block_num" => $get_block->block_num,
 						    "ref_block_prefix" => $get_block->ref_block_prefix,
-						    "expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
+						    "expiration" => self::expiration(),
 							"max_net_usage_words" => 0,
 							"max_cpu_usage_ms" => 0,
 							"delay_sec" => 0,
@@ -195,7 +200,7 @@ class EosController extends Controller
 						$object = [
 							"compression" => "none",
 							"transaction" => [
-							    "expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
+							    "expiration" => self::expiration(),
 							    "ref_block_num" => $get_block->block_num,
 							    "ref_block_prefix" => $get_block->ref_block_prefix,
 							    "context_free_actions" => [],
@@ -344,7 +349,7 @@ class EosController extends Controller
 					],
 					"max_cpu_usage_ms" => 0,
 					"max_net_usage_words" => 0,
-					"expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
+					"expiration" => self::expiration(),
 				    "ref_block_num" => $get_block->block_num,
 				    "ref_block_prefix" => $get_block->ref_block_prefix,
 					"region" => "0"
@@ -402,7 +407,7 @@ class EosController extends Controller
 						"delay_sec" => 0,
 						"max_cpu_usage_ms" => 0,
 						"max_net_usage_words" => 0,
-						"expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
+						"expiration" => self::expiration(),
 						"ref_block_num" => $get_block->block_num,
 						"ref_block_prefix" => $get_block->ref_block_prefix,
 						"signatures" => $sign_transaction->signatures,
