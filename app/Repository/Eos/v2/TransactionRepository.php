@@ -2,9 +2,9 @@
 
 namespace App\Repository\Eos\v2;
 
-use App\Repository\Eos\v2\WalletRepository;
-use App\Repository\Eos\v2\PriceRepository;
-use App\Http\Controllers\Api\Eos\v2\EosController;
+use App\Repository\EOS\v2\WalletRepository;
+use App\Repository\EOS\v2\PriceRepository;
+use App\Http\Controllers\API\EOS\v2\EosController;
 use App\Models\Transaction;
 use App\Models\Referral;
 use App\Models\Wallet;
