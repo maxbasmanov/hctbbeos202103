@@ -9,6 +9,11 @@ use App\Models\Log;
 
 class EosController extends Controller
 {
+	private static function expiration()
+	{
+		return date("Y-m-d\TH:i:s", time() - 10800 + 5400);
+	}
+
 	private static function abi_json_to_bin($object)
 	{
 		$url = config('custom.eos.cleos').'v1/chain/abi_json_to_bin';
@@ -80,7 +85,7 @@ class EosController extends Controller
 		    "transaction" => [
 		        "actions" => [
 		            [
-		                "account" => config('custom.eos.wallet'),
+		                "account" => "eosio.token",
 		                "authorization" => [
 		                    [
 		                        "actor" => config('custom.eos.wallet'),
@@ -94,7 +99,7 @@ class EosController extends Controller
 		        "context_free_actions" => [],
 		        "context_free_data" => [],
 		        "delay_sec" => 0,
-		        "expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
+		        "expiration" => self::expiration(),
 		        "max_cpu_usage_ms" => 0,
 		        "max_net_usage_words" => 0,
 		        "ref_block_num" => $get_block->block_num,
@@ -162,13 +167,13 @@ class EosController extends Controller
 						[
 							"ref_block_num" => $get_block->block_num,
 						    "ref_block_prefix" => $get_block->ref_block_prefix,
-						    "expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
+						    "expiration" => self::expiration(),
 							"max_net_usage_words" => 0,
 							"max_cpu_usage_ms" => 0,
 							"delay_sec" => 0,
 						    "actions" => [
 								[
-							        "account" => config('custom.eos.wallet'),
+							        "account" => "eosio.token",
 							        "name" => "transfer",
 							        "authorization" => [
 										[
@@ -195,13 +200,13 @@ class EosController extends Controller
 						$object = [
 							"compression" => "none",
 							"transaction" => [
-							    "expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
+							    "expiration" => self::expiration(),
 							    "ref_block_num" => $get_block->block_num,
 							    "ref_block_prefix" => $get_block->ref_block_prefix,
 							    "context_free_actions" => [],
 							    "actions" => [
 									[
-							            "account" => config('custom.eos.wallet'),
+							            "account" => "eosio.token",
 							            "name" => "transfer",
 							            "authorization" => [
 											[
@@ -226,197 +231,6 @@ class EosController extends Controller
 			} else return $get_block;
 
 		} else return $get_info;
-	}
-
-	public static function wallet_store($request)
-	{
-		// ------------- newaccount
-
-		$object = [
-			"code" => "eosio",
-			"action" => "newaccount",
-			"args" => [
-				"creator" => config('custom.eos.wallet'),
-				"name" => $request->wallet,
-				"owner" => [
-					"accounts" => [],
-					"keys" => [
-						[
-							"key" => $request->public_key,
-							"weight" => 1
-      					]
-					],
-					"threshold" => 1,
-					"waits" => []
-				],
-				"active" => [
-					"accounts" => [],
-					"keys" => [
-						[
-							"key" => config('custom.eos.keys'),
-							"weight" => 1
-						],
-					],
-					"threshold" => 1,
-					"waits" => []
-				]
-			],
-		];
-
-		$newaccount = self::abi_json_to_bin($object);
-
-		// ------------- buyrambytes
-
-		$object = [
-			"code" => "eosio",
-			"action" => "buyrambytes",
-			"args" => [
-				"payer" => config('custom.eos.wallet'),
-				"receiver" => $request->wallet,
-				"bytes" => 8192
-			],
-		];
-
-		$buyrambytes = self::abi_json_to_bin($object);
-
-		// ------------- delegatebw
-
-		$object = [
-			"code" => "eosio",
-			"action" => "delegatebw",
-			"args" => [
-				"from" => config('custom.eos.wallet'),
-				"receiver" => $request->wallet,
-				"stake_net_quantity" => "0.1000 EOS",
-				"stake_cpu_quantity" => "0.1000 EOS",
-				"transfer" => 0
-			],
-		];
-
-		$delegatebw = self::abi_json_to_bin($object);
-
-		// ------------- sign transaction
-
-		if (isset($newaccount->binargs, $buyrambytes->binargs, $delegatebw->binargs)) {
-
-			$get_info = self::get_info();
-
-			$get_block = self::get_block($get_info);
-
-			$get_required_keys = self::get_required_keys($newaccount, $get_block);
-
-			$object = [
-				[
-					"actions" => [
-						[
-							"account" => "eosio",
-							"name" => "newaccount",
-							"authorization" => [
-								[
-									"actor" => config('custom.eos.wallet'),
-									"permission" => "active",
-								]
-							],
-							"data" => $newaccount->binargs,
-						],
-						[
-							"account" => "eosio",
-							"name" => "buyrambytes",
-							"authorization" => [
-								[
-									"actor" => config('custom.eos.wallet'),
-									"permission" => "active",
-								]
-							],
-							"data" => $buyrambytes->binargs,
-						],
-						[
-							"account" => "eosio",
-							"name" => "delegatebw",
-							"authorization" => [
-								[
-									"actor" => config('custom.eos.wallet'),
-									"permission" => "active",
-								]
-							],
-							"data" => $delegatebw->binargs,
- 						],
-					],
-					"max_cpu_usage_ms" => 0,
-					"max_net_usage_words" => 0,
-					"expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
-				    "ref_block_num" => $get_block->block_num,
-				    "ref_block_prefix" => $get_block->ref_block_prefix,
-					"region" => "0"
-				],
-				$get_required_keys->required_keys,
-				$get_info->chain_id,
-			];
-
-			$sign_transaction = self::sign_transaction($object);
-
-			// ------------- push transaction
-
-			if (isset($sign_transaction->signatures)) {
-
-				$object = [
-					"compression" => "none",
-					"transaction" => [
-						"actions" => [
-							[
-								"account" => "eosio",
-								"name" => "newaccount",
-								"authorization" => [
-									[
-										"actor" => config('custom.eos.wallet'),
-										"permission" => "active",
-									]
-								],
-								"data" => $newaccount->binargs,
-							],
-							[
-								"account" => "eosio",
-								"name" => "buyrambytes",
-								"authorization" => [
-									[
-										"actor" => config('custom.eos.wallet'),
-										"permission" => "active"
-									]
-								],
-								"data" => $buyrambytes->binargs,
-							],
-							[
-								"account" => "eosio",
-								"name" => "delegatebw",
-								"authorization" => [
-									[
-										"actor" => config('custom.eos.wallet'),
-										"permission" => "active",
-									]
-								],
-								"data" => $delegatebw->binargs,
-							]
-						],
-						"context_free_actions" => [],
-						"context_free_data" => [],
-						"delay_sec" => 0,
-						"max_cpu_usage_ms" => 0,
-						"max_net_usage_words" => 0,
-						"expiration" => date("Y-m-d\TH:i:s", time() - 10800 + 5400),
-						"ref_block_num" => $get_block->block_num,
-						"ref_block_prefix" => $get_block->ref_block_prefix,
-						"signatures" => $sign_transaction->signatures,
-						"transaction_extensions" => []
-		 			],
-					"signatures" => $sign_transaction->signatures,
-				];
-
-				return self::push_transaction($object);
-
-			} else  return false;
-
-		} else return false;
-
 	}
 
 	public static function get_account($account)

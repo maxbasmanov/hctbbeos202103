@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Eos\v2;
+namespace App\Repository\EOS\v2;
 
 use App\Models\Price;
 
