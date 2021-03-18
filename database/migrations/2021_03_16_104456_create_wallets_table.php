@@ -18,7 +18,7 @@ class CreateWalletsTable extends Migration
 			$table->integer('group_id');
 			$table->uuid('client_id');
 			$table->integer('status')->default(1);
-			$table->string('name');
+			$table->string('user_id');
 			$table->string('wallet')->nullable();
 			$table->timestamps();
 			$table->softDeletes();

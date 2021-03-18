@@ -13,7 +13,7 @@ class WalletController extends Controller
 {
 	public function store(WalletStoreRequest $request)
 	{
-		$resp = WalletRepository::store($request);
+		$resp = WalletRepository::update($request);
 
 		return $this->sendResponse($resp);
 	}
