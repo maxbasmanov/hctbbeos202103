@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\LogController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +14,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get(
+    '/',
+    [TransactionController::class, 'index']
+)->name('transactions.index');
+
+Route::get(
+    '/search',
+    [TransactionController::class, 'search']
+)->name('transactions.search');
+
+Route::get(
+    '/transaction/{transaction}',
+    [TransactionController::class, 'view']
+)->name('transactions.view');
+
+Route::get(
+    '/logs',
+    [LogController::class, 'index']
+)->name('logs.index');
+
+Route::get(
+    '/logs/{log}',
+    [LogController::class, 'view']
+)->name('logs.view');

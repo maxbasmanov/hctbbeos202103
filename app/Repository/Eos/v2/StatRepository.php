@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository\Eos\v2;
+namespace App\Repository\EOS\v2;
 
-use App\Repository\Eos\v2\WalletRepository;
+use App\Repository\EOS\v2\WalletRepository;
 use App\Models\Transaction;
 
 class StatRepository
@@ -11,19 +11,14 @@ class StatRepository
 	{
 		$transactions = Transaction::groupBy([
 				'wallet_id',
-				'blockchains.id',
 			])
 			->selectRaw('wallets.user_id')
             ->selectRaw('SUM(transactions.amount) as tokens')
-            ->selectRaw('blockchains.token as units')
-            ->selectRaw('blockchains.delimiter as delimiter')
             ->selectRaw('COUNT(*) as transactions')
             ->selectRaw("'n/a' as income")
             ->selectRaw("'n/a' as offers")
-            ->join('blockchains', 'blockchains.id', '=', 'transactions.blockchain_id')
 			->join('wallets', 'wallets.id', '=', 'transactions.wallet_id')
             ->where('transactions.group_id', $request->group_id)
-			->where('transactions.blockchain_id', $request->blockchain_id)
             ->where('transactions.status', 1);
 
         if ($request->course_id) {

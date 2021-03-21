@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repository\Eos\v2;
+namespace App\Repository\EOS\v2;
 
-use App\Repository\Eos\v2\WalletRepository;
-use App\Repository\Eos\v2\TransactionRepository;
-use App\Http\Controllers\API\Eos\v2\EosController;
+use App\Repository\EOS\v2\WalletRepository;
+use App\Repository\EOS\v2\TransactionRepository;
+use App\Http\Controllers\API\EOS\v2\EosController;
 use App\Models\Referral;
 use App\Models\Wallet;
 
@@ -22,13 +22,11 @@ class ReferralRepository
 
                 $invited = Wallet::where('user_id', $request->student_id)
                     ->where('group_id', $request->group_id)
-                    ->where('blockchain_id', $request->blockchain_id)
                     ->where('status', 1)
                     ->first();
 
                 $referral = Wallet::where('user_id', $request->referral_id)
                     ->where('group_id', $request->group_id)
-                    ->where('blockchain_id', $request->blockchain_id)
                     ->where('status', 1)
                     ->first();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Eos\v2;
+namespace App\Repository\EOS\v2;
 
 use App\Repository\EOS\v2\WalletRepository;
 use App\Repository\EOS\v2\PriceRepository;
@@ -25,7 +25,7 @@ class TransactionRepository
         $transaction->event_detail = $data['eventDetail'];
         $transaction->org = $data['org'];
         $transaction->amount = $amount;
-        $transaction->blockchain_id = $request->blockchain_id;
+		$transaction->comment = '?';
 
         $transaction->save();
     }
@@ -47,14 +47,11 @@ class TransactionRepository
 						'event_detail',
 						'course_id',
 					])
-					->selectRaw("CONCAT_WS(' ', transactions.amount, blockchains.token) as amount")
-					->join('blockchains', 'blockchains.id', '=', 'transactions.blockchain_id')
 					->where('wallet_id', $wallet->id)
-                    ->where('blockchain_id', $wallet->blockchain_id)
-                    ->groupBy('blockchains.id', 'transactions.id')
+                    ->groupBy('transactions.id')
 					->get();
 
-                $data[$wallet->wallet. ' (' . $wallet->blockchains->name . ')'] = $transactions;
+                $data[$wallet->wallet] = $transactions;
 			}
 		}
 
@@ -66,9 +63,8 @@ class TransactionRepository
 
     public static function store($request)
 	{
-        $wallet = Wallet::where('user_id', $request->student_id)
+        $wallet = Wallet::where('name', $request->student_id)
             ->where('group_id', $request->group_id)
-            ->where('blockchain_id', $request->blockchain_id)
             ->where('status', 1)
             ->first();
 

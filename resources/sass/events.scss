@@ -1,0 +1,39 @@
+.events {
+	z-index: 9999;
+	position: fixed;
+	width: 100%;
+	line-height: 3.438em;
+	top: 0;
+	left: 0;
+	background: $gray-900;
+	color: $gray-500;
+	vertical-align: middle;
+	text-align: center;
+}
+.events a {
+	color: $red;
+	text-decoration: none;
+}
+.events form {
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+.events {
+	-moz-animation: hideErrors 0s ease-in 3s forwards;
+	-webkit-animation: hideErrors 0s ease-in 3s forwards;
+	-o-animation: hideErrors 0s ease-in 3s forwards;
+	animation: hideErrors 0s ease-in 3s forwards;
+	-webkit-animation-fill-mode: forwards;
+	animation-fill-mode: forwards;
+}
+@keyframes hideErrors {
+	to {
+		visibility:hidden;
+	}
+}
+@-webkit-keyframes hideErrors {
+	to {
+		visibility:hidden;
+	}
+}
