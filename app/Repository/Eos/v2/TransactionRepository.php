@@ -63,7 +63,7 @@ class TransactionRepository
 
     public static function store($request)
 	{
-        $wallet = Wallet::where('name', $request->student_id)
+        $wallet = Wallet::where('user_id', $request->student_id)
             ->where('group_id', $request->group_id)
             ->where('status', 1)
             ->first();
