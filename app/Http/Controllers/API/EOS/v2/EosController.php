@@ -244,6 +244,32 @@ class EosController extends Controller
 		return $result;
 	}
 
+	private function log_request($url, $object, $response)
+	{
+		$url = parse_url($url);
+
+		if (@$url['path'] == '/v1/wallet/unlock') {
+			if ($object != false) {
+				$object['1'] = '**********';
+			}
+		}
+
+		$log = new Log;
+		$log->host = request()->getHttpHost();
+		$log->group_id = request()->group_id ?? 0;
+		$log->client_id = request()->header('PHP_AUTH_USER') ?? request()->client_id ?? 0;
+		$log->method = ($method == 'POST') ? 1 : 0;
+		$log->status = @$info['http_code'];
+		$log->url = @$url['path'];
+		$log->ip = '127.0.0.1';
+		$log->request = base64_encode(gzcompress((($object != false)
+			? json_encode($object)
+			: $body), 9));
+		$log->response = base64_encode(gzcompress($head, 9));
+		$log->created_at = Carbon::now();
+		$log->save();
+	}
+
 	private static function make_request($method, $url, $object = false, $body = false)
 	{
 		$header = [
@@ -272,38 +298,13 @@ class EosController extends Controller
 
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-		$head = curl_exec($ch);
+		$response = curl_exec($ch);
 		$info = curl_getinfo($ch);
 
-		$url = parse_url($url);
-
-		if (@$url['path'] == '/v1/wallet/unlock') {
-			if ($object != false) {
-				$object['1'] = '**********';
-			}
-		}
-
-		$log = new Log;
-		$log->host = request()->getHttpHost();
-		$log->group_id = request()->group_id ?? 0;
-		$log->client_id = request()->header('PHP_AUTH_USER') ?? request()->client_id ?? 0;
-		$log->method = ($method == 'POST') ? 1 : 0;
-		$log->status = @$info['http_code'];
-		$log->url = @$url['path'];
-		$log->ip = '127.0.0.1';
-		$log->request = base64_encode(gzcompress((($object != false) ? json_encode($object) : $body), 9));
-		$log->response = base64_encode(gzcompress($head, 9));
-		$log->created_at = Carbon::now();
-		$log->save();
-
-		$result = json_decode($head);
-
-		if (json_last_error()) {
-			return false;
-		} else {
-			return $result;
-		}
+		$this->log_request($url, $object, $response);
 
 		curl_close($ch);
+
+		return json_last_error() ? false : json_decode($response);
 	}
 }
