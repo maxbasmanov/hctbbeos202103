@@ -244,7 +244,7 @@ class EosController extends Controller
 		return $result;
 	}
 
-	private function log_request($url, $object, $response)
+	private static function log_request($url, $object, $response)
 	{
 		$url = parse_url($url);
 
@@ -301,7 +301,7 @@ class EosController extends Controller
 		$response = curl_exec($ch);
 		$info = curl_getinfo($ch);
 
-		$this->log_request($url, $object, $response);
+		self::log_request($url, $object, $response);
 
 		curl_close($ch);
 
