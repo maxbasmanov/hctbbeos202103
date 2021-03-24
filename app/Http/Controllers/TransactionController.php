@@ -29,7 +29,7 @@ class TransactionController extends Controller
 				$query->where('name', 'like', '%'.$request->search.'%');
 			})
             ->oRwhereHas('wallets', function ($query) use ($request) {
-    			$query->where('name', 'like', '%'.$request->search.'%');
+    			$query->where('user_id', 'like', '%'.$request->search.'%');
     		})
             ->orWhere('transaction_id', $request->search)
     		->orderBy('id', 'desc')
