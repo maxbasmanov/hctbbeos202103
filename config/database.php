@@ -33,6 +33,8 @@ return [
     |
     */
 
+    'redmine' => env('DB_REDMINE', 'mysql'),
+
     'connections' => [
 
         'sqlite' => [
