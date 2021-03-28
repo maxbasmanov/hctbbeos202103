@@ -253,9 +253,9 @@ class EosController extends Controller
 			if (isset($get_block->block_num, $get_block->ref_block_prefix)) {
 
 				$object = [
-					"code" => "btkawktupzky",
+					"code" => config('custom.eos.project_contract'),
 					"action" => "finallize",
-					"args" => $data
+					"args" => $data,
 				];
 
 				$abi_json_to_bin = self::abi_json_to_bin($object);
