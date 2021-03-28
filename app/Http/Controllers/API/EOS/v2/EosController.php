@@ -136,6 +136,15 @@ class EosController extends Controller
 		return $result;
 	}
 
+	private static function send_transaction($object)
+	{
+		$url = config('custom.eos.cleos').'v1/chain/send_transaction';
+
+		$result = self::make_request('POST', $url, $object);
+
+		return $result;
+	}
+
 	public static function do_transaction($from, $to, $quantity, $memo)
 	{
 		$get_info = self::get_info();
@@ -243,7 +252,13 @@ class EosController extends Controller
 
 			if (isset($get_block->block_num, $get_block->ref_block_prefix)) {
 
-				$abi_json_to_bin = self::abi_json_to_bin($data);
+				$object = [
+					"code" => "btkawktupzky",
+					"action" => "finallize",
+					"args" => $data
+				];
+
+				$abi_json_to_bin = self::abi_json_to_bin($object);
 
 				if (isset($abi_json_to_bin->binargs)) {
 
@@ -259,7 +274,7 @@ class EosController extends Controller
 							"delay_sec" => 0,
 						    "actions" => [
 								[
-							        "account" => config('custom.project_contract'),
+							        "account" => config('custom.eos.project_contract'),
 							        "name" => "finallize",
 							        "authorization" => [
 										[
@@ -292,8 +307,8 @@ class EosController extends Controller
 							    "context_free_actions" => [],
 							    "actions" => [
 									[
-							            "account" => config('custom.project_contract'),
-							            "name" => "transfer",
+							            "account" => config('custom.eos.project_contract'),
+							            "name" => "finallize",
 							            "authorization" => [
 											[
 							                    "actor" => config('custom.eos.wallet'),
@@ -308,7 +323,7 @@ class EosController extends Controller
 							"signatures" => $sign_transaction->signatures,
 						];
 
-						return self::push_transaction($object);
+						return self::send_transaction($object);
 
 					} else return $sign_transaction;
 
