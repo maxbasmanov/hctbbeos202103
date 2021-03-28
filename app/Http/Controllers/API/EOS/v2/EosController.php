@@ -11,7 +11,7 @@ class EosController extends Controller
 {
 	private static function expiration()
 	{
-		return date("Y-m-d\TH:i:s", time() - 10800 + 5400);
+		return date("Y-m-d\TH:i:s", time() - 10800 + 12400);
 	}
 
 	private static function abi_json_to_bin($object)
@@ -147,12 +147,12 @@ class EosController extends Controller
 			if (isset($get_block->block_num, $get_block->ref_block_prefix)) {
 
 				$object = [
-					'code' => 'eosio.token',
+					'code' => config('custom.token_contract'),
 					'action' => 'transfer',
 					'args' => [
 						'from' => $from,
 						'to' => $to,
-						'quantity' => $quantity,
+						'quantity' => $quantity . " " . config('custom.token_name'),
 						'memo' => $memo,
 					],
 				];
@@ -173,7 +173,7 @@ class EosController extends Controller
 							"delay_sec" => 0,
 						    "actions" => [
 								[
-							        "account" => "eosio.token",
+							        "account" => config('custom.token_contract'),
 							        "name" => "transfer",
 							        "authorization" => [
 										[
@@ -206,7 +206,93 @@ class EosController extends Controller
 							    "context_free_actions" => [],
 							    "actions" => [
 									[
-							            "account" => "eosio.token",
+							            "account" => config('custom.token_contract'),
+							            "name" => "transfer",
+							            "authorization" => [
+											[
+							                    "actor" => config('custom.eos.wallet'),
+							                    "permission" => "active",
+							                ],
+							            ],
+							            "data" => $abi_json_to_bin->binargs,
+							        ],
+							    ],
+								"transaction_extensions" => []
+							],
+							"signatures" => $sign_transaction->signatures,
+						];
+
+						return self::push_transaction($object);
+
+					} else return $sign_transaction;
+
+		   		} else return $abi_json_to_bin;
+
+			} else return $get_block;
+
+		} else return $get_info;
+	}
+
+	public static function project_finallize($data)
+	{
+		$get_info = self::get_info();
+
+		if (isset($get_info->chain_id, $get_info->head_block_num)) {
+
+			$get_block = self::get_block($get_info);
+
+			if (isset($get_block->block_num, $get_block->ref_block_prefix)) {
+
+				$abi_json_to_bin = self::abi_json_to_bin($data);
+
+				if (isset($abi_json_to_bin->binargs)) {
+
+					$get_required_keys = self::get_required_keys($abi_json_to_bin, $get_block);
+
+					$object = [
+						[
+							"ref_block_num" => $get_block->block_num,
+						    "ref_block_prefix" => $get_block->ref_block_prefix,
+						    "expiration" => self::expiration(),
+							"max_net_usage_words" => 0,
+							"max_cpu_usage_ms" => 0,
+							"delay_sec" => 0,
+						    "actions" => [
+								[
+							        "account" => config('custom.project_contract'),
+							        "name" => "finallize",
+							        "authorization" => [
+										[
+								            "actor" => config('custom.eos.wallet'),
+								            "permission" => "active",
+										]
+							        ],
+							        "data" => $abi_json_to_bin->binargs,
+								],
+						    ],
+							"transaction_extensions" => [],
+						    "signatures" => [],
+							"context_free_data" => [],
+							"context_free_actions" => [],
+						],
+						$get_required_keys->required_keys,
+						$get_info->chain_id,
+					];
+
+					$sign_transaction = self::sign_transaction($object);
+
+					if (isset($sign_transaction->signatures)) {
+
+						$object = [
+							"compression" => "none",
+							"transaction" => [
+							    "expiration" => self::expiration(),
+							    "ref_block_num" => $get_block->block_num,
+							    "ref_block_prefix" => $get_block->ref_block_prefix,
+							    "context_free_actions" => [],
+							    "actions" => [
+									[
+							            "account" => config('custom.project_contract'),
 							            "name" => "transfer",
 							            "authorization" => [
 											[
