@@ -254,7 +254,7 @@ class EosController extends Controller
 
 				$object = [
 					"code" => config('custom.eos.project_contract'),
-					"action" => "finallize",
+					"action" => "finadd",
 					"args" => $data,
 				];
 
@@ -275,7 +275,7 @@ class EosController extends Controller
 						    "actions" => [
 								[
 							        "account" => config('custom.eos.project_contract'),
-							        "name" => "finallize",
+							        "name" => "finadd",
 							        "authorization" => [
 										[
 								            "actor" => config('custom.eos.wallet'),
@@ -308,7 +308,7 @@ class EosController extends Controller
 							    "actions" => [
 									[
 							            "account" => config('custom.eos.project_contract'),
-							            "name" => "finallize",
+							            "name" => "finadd",
 							            "authorization" => [
 											[
 							                    "actor" => config('custom.eos.wallet'),
