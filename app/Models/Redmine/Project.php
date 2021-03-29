@@ -4,7 +4,7 @@ namespace App\Models\Redmine;
 
 //use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-//use App\Models\Redmine\User;
+use Illuminate\Support\Facades\DB;
 
 class Project extends Model
 {
@@ -18,10 +18,19 @@ class Project extends Model
 		parent::__construct($attributes);
 	}
 
-/*	public function users()
+    public static function getClosedUnpaidProjects()
 	{
-		return $this
-			->belongsTo(User::class, 'poster_id', 'user_id');
+		return Project::select(
+									DB::raw('projects.*'),
+									DB::raw('custom_values.value as projectPayed')
+								)
+							->leftJoin('custom_values', function ($join) {
+								$join->on('custom_values.customized_id', '=', 'projects.id')
+									 ->where('custom_values.customized_type', '=', 'Project')
+									 ->where('custom_values.custom_field_id', '=', 2);
+							})
+							->where('projects.status', '=', 5)
+							->where('custom_values.value', '=', '0')
+							->get();
 	}
-*/
 }

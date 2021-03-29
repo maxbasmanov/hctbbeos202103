@@ -4,7 +4,7 @@ namespace App\Models\Redmine;
 
 //use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-//use App\Models\Redmine\User;
+use Illuminate\Support\Facades\DB;
 
 class CustomValue extends Model
 {
@@ -18,10 +18,13 @@ class CustomValue extends Model
 		parent::__construct($attributes);
 	}
 
-/*	public function users()
+	public static function getProjectPaymentStatus($projectId)
 	{
-		return $this
-			->belongsTo(User::class, 'poster_id', 'user_id');
+		return CustomValue::select('*')
+							->where('customized_type', '=', 'Project')
+							->where('custom_field_id', '=', 2)
+							->where('customized_id', '=', $projectId)
+							->get();
 	}
-*/
+
 }

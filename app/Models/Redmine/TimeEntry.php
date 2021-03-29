@@ -4,7 +4,7 @@ namespace App\Models\Redmine;
 
 //use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-//use App\Models\Redmine\User;
+use Illuminate\Support\Facades\DB;
 
 class TimeEntry extends Model
 {
@@ -18,10 +18,19 @@ class TimeEntry extends Model
 		parent::__construct($attributes);
 	}
 
-/*	public function users()
+	public static function getProjectTimeEntries($projectId)
 	{
-		return $this
-			->belongsTo(User::class, 'poster_id', 'user_id');
+		return DB::table('time_entries')
+					->select(
+									DB::raw('sum(time_entries.hours) as totalHours'),
+									DB::raw("(select cv.value from redmine.custom_values as cv
+												where cv.customized_type = 'Principal' 
+													and cv.custom_field_id = 1
+													and cv.customized_id = time_entries.user_id) as userWallet") 
+							)
+					->where('time_entries.project_id', '=', $projectId)
+					->groupBy('time_entries.user_id')
+					->get();
 	}
-*/
+
 }
