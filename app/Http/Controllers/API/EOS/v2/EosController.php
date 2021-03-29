@@ -69,7 +69,7 @@ class EosController extends Controller
 
 		$object = [
 			"account" => $account,
-			"code" => config('custom.eos.contract'),
+			"code" => config('custom.eos.token_contract'),
 			"symbol" => null,
 		];
 
@@ -156,12 +156,12 @@ class EosController extends Controller
 			if (isset($get_block->block_num, $get_block->ref_block_prefix)) {
 
 				$object = [
-					'code' => config('custom.token_contract'),
+					'code' => config('custom.eos.token_contract'),
 					'action' => 'transfer',
 					'args' => [
 						'from' => $from,
 						'to' => $to,
-						'quantity' => $quantity . " " . config('custom.token_name'),
+						'quantity' => $quantity . config('custom.eos.token_name'),
 						'memo' => $memo,
 					],
 				];
@@ -182,7 +182,7 @@ class EosController extends Controller
 							"delay_sec" => 0,
 						    "actions" => [
 								[
-							        "account" => config('custom.token_contract'),
+							        "account" => config('custom.eos.token_contract'),
 							        "name" => "transfer",
 							        "authorization" => [
 										[
@@ -215,7 +215,7 @@ class EosController extends Controller
 							    "context_free_actions" => [],
 							    "actions" => [
 									[
-							            "account" => config('custom.token_contract'),
+							            "account" => config('custom.eos.token_contract'),
 							            "name" => "transfer",
 							            "authorization" => [
 											[
