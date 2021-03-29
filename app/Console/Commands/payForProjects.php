@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Redmine\Project;
 use App\Models\Redmine\CustomValue;
 use App\Models\Redmine\TimeEntry;
-App\Http\Controllers\API\EOS\v2\EosController;
+use App\Http\Controllers\API\EOS\v2\EosController;
 
 class payForProjects extends Command
 {
