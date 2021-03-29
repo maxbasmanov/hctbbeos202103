@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 class Project extends Model
 {
     //use HasFactory;
-
+	public $timestamps = false;
+	
 	protected $table = 'projects';
 
 	public function __construct(array $attributes = [])
@@ -24,7 +25,7 @@ class Project extends Model
 									DB::raw('projects.*'),
 									DB::raw('custom_values.value as projectPayed')
 								)
-							->leftJoin('custom_values', function ($join) {
+							->leftJoin(config('database.redmine') . '.custom_values as custom_values', function ($join) {
 								$join->on('custom_values.customized_id', '=', 'projects.id')
 									 ->where('custom_values.customized_type', '=', 'Project')
 									 ->where('custom_values.custom_field_id', '=', 2);

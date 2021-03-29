@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 class CustomValue extends Model
 {
     //use HasFactory;
-
+	public $timestamps = false;
+	
 	protected $table = 'custom_values';
 
 	public function __construct(array $attributes = [])
@@ -24,7 +25,7 @@ class CustomValue extends Model
 							->where('customized_type', '=', 'Project')
 							->where('custom_field_id', '=', 2)
 							->where('customized_id', '=', $projectId)
-							->get();
+							->first();
 	}
 
 }

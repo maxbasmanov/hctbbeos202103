@@ -46,11 +46,13 @@ class payForProjects extends Command
 		
 		$unpaidProjects = Project::getClosedUnpaidProjects();
 		
-		if (empty($unpaidProjects))
+		if ($unpaidProjects->isEmpty())
 		{
 			$this->info('There are no unpaid Projects!');
 			
 		} else {
+			
+			$this->info('Found unpaid Projects!');
 			
 			foreach ($unpaidProjects as $unpaidProject)
 			{
