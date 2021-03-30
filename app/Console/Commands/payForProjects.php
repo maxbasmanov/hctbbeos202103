@@ -75,6 +75,8 @@ class payForProjects extends Command
 				
 				$project 				= new \stdClass();
 				$project->project_id 	= $unpaidProject->id;
+				$project->project_name	= $unpaidProject->name;
+				$project->project_alias	= $unpaidProject->identifier;
 				$project->workers		= array();
 				
 				$haveEmptyWallets = false;
