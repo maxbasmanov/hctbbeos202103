@@ -87,7 +87,7 @@ class payForProjects extends Command
 					}
 					
 					$userObject				= new \stdClass();
-					$userObject->hours		= $timeEntry->totalHours;
+					$userObject->hours		= (int)($timeEntry->totalHours * 100);
 					$userObject->account	= $timeEntry->userWallet;
 					
 					$project->workers[]		= $userObject;
